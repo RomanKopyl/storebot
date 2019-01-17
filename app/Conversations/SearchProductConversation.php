@@ -3,11 +3,11 @@
 namespace App\Conversations;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
-// use BotMan\BotMan\Messages\Incoming\Answer;
-// use BotMan\BotMan\Messages\Outgoing\Question;
-// use BotMan\BotMan\Messages\Outgoing\Actions\Button;
-// use BotMan\BotMan\Messages\Attachments\Image;
-// use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
+use BotMan\BotMan\Messages\Attachments\Image;
+use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use Storage;
 use App\Product;
 use App\User;
@@ -24,23 +24,31 @@ class SearchProductConversation extends Conversation
     {
         $products = Product::all();
 
-        // $this->say($products[1]->name);
-        // $this->say('1');
-        foreach ($products as $product) {
-            $contents = $product->name;
-            $this->say($contents);
+        $this->say($products[1]->name);
 
-            $image = $product->photo;
-            $attachment = new Image($image);
+        $image = $products[2]->photo;
+        $text = $products[2]->description;
+        $attachment = new Image($image);
+        $message = OutgoingMessage::create($text)
+                    ->withAttachment($attachment);
 
-            $message = OutgoingMessage::create($text)
-                        ->withAttachment($attachment);
-            $this->say($message);
+        $this->say($message);
+
+        // foreach ($products as $product) {
+        //     $contents = $product->name;
+        //     $this->say($contents);
+
+        //     $image = $product->photo;
+        //     $attachment = new Image($image);
+
+        //     $message = OutgoingMessage::create($text)
+        //                 ->withAttachment($attachment);
+        //     $this->say($message);
 
             // $text = $product->name.PHP_EOL.' - '.$product->price.' грн'
             //                 .PHP_EOL.$product->description;
             // $this->addScreen($image, $text);
-        }
+        // }
 
         //     $productSought = '';
 
