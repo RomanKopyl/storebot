@@ -13,6 +13,7 @@ class ShowAllCategoriesConversation extends Conversation
      */
     public function run()
     {
-        //
+        $contents = 'Categories...';
+        $this->say($contents);
     }
 }

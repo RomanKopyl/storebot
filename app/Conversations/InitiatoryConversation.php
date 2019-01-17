@@ -3,6 +3,10 @@
 namespace App\Conversations;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
+use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
+use Storage;
 
 class InitiatoryConversation extends Conversation
 {
@@ -16,13 +20,13 @@ class InitiatoryConversation extends Conversation
         $question = Question::create('Добрий день. Який товар вас цікавить?')
             ->callbackId('firstQuestion')
             ->addButtons([
-                Button::create('Пошук за назвою')->value('serchProduct'),
+                Button::create('Пошук за назвою')->value('searchProduct'),
                 Button::create('Категорія')->value('showAllCategories'),
                 Button::create('Іншим разом')->value('refuse'),
             ]);
         $this->ask($question, function (Answer $answer) {
             if ($answer->isInteractiveMessageReply()) {
-                if ($answer->getValue() === 'serchProduct') {
+                if ($answer->getValue() === 'searchProduct') {
                     $this->bot->startConversation(new SearchProductConversation());
                 } elseif ($answer->getValue() === 'showAllCategories') {
                     $this->bot->startConversation(new ShowAllCategoriesConversation());

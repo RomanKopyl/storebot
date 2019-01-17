@@ -8,21 +8,20 @@ class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
+            //'id', 'name', 'products',
             $table->increments('id');
+            $table->string('name')->nullable();
+            $table->string('products')->nullable();
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
