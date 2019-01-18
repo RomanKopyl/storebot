@@ -9,7 +9,6 @@ use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use App\Category;
-use App\Product;
 
 class ShowCategoriesConversation extends Conversation
 {
@@ -29,8 +28,9 @@ class ShowCategoriesConversation extends Conversation
             if ($answer->isInteractiveMessageReply()) {
                 foreach ($categories as $category) {
                     if ($answer->getValue() === $category->name) {
-                        // $this->say($category->name);
                         $this->addProducts($category);
+
+                        // $this->say($category->name);
                         // $this->bot->startConversation(new ShowProductByConversation());
                     }
                 }
@@ -41,11 +41,8 @@ class ShowCategoriesConversation extends Conversation
     protected function addProducts($category)
     {
         $productsFound = $category->products;
-        // $this->say($category->name);
 
         foreach ($productsFound as $product) {
-            // array_push($productsFound, $product);
-
             $image = $product->photo;
             $text = $product->name.PHP_EOL.' - '.$product->price.' грн'
                                 .PHP_EOL.$product->description;

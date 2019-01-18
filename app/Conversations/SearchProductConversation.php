@@ -29,6 +29,7 @@ class SearchProductConversation extends Conversation
             $productSought = $answer->getText();
             $products = Product::all();
 
+            //we show found products on screen
             foreach ($products as $product) {
                 if (stripos($product->name, $productSought) !== false) {
                     array_push($productsFound, $product);
@@ -41,19 +42,50 @@ class SearchProductConversation extends Conversation
                 }
             }
 
-            if (empty($productsFound)) {
-                // $this->say('Товарів не знайдено. Спробуйте ще.');
-                // $this->bot->startConversation(new InitiatoryConversation());
+            // if goods are found, add the buy button, otherwise we ask whether to continue the search
+
+            if (!empty($productsFound)) {
+                $this->addBuyButton($productsFound);
+            } else {
                 $this->askContinue();
             }
         });
     }
 
-    protected function addButtons($productsFound)
+    public function addScreen($image, $text)
+    {
+        $attachment = new Image($image);
+
+        $message = OutgoingMessage::create($text)
+                        ->withAttachment($attachment);
+
+        $this->say($message);
+    }
+
+    public function addBuyButton($productsFound)
+    {
+        $question = Question::create('Натисніть на товар, який хочете придбати.')
+            ->callbackId('4Question')
+            ->addButtons($this->addButtons());
+
+        $this->ask($question, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                foreach ($productsFound as $product) {
+                    if ($answer->getValue() === $product->name) {
+                        $this->say($product->name);
+                        // $this->addProducts($product);
+                        // $this->bot->startConversation(new ShowProductByConversation());
+                    }
+                }
+            }
+        });
+    }
+
+    public function addButtons($productsFound)
     {
         $buttons = [];
         foreach ($productsFound as $product) {
-            $buttons[] = Button::create($product > name)->value($product > name);
+            $buttons[] = Button::create($product->name)->value($product->name);
         }
 
         return $buttons;
@@ -78,15 +110,15 @@ class SearchProductConversation extends Conversation
         });
     }
 
-    public function addScreen($image, $text)
-    {
-        $attachment = new Image($image);
+    // public function addProduct($product)
+    // {
+//     $cart->user_id = User::where('user_id', $user_id)->first();
+//     $cart->products = Product::where('product', $product)->first();
+//     $cart->amount += Product::where('price', $price)->first();
+//     $user->save();
 
-        $message = OutgoingMessage::create($text)
-                        ->withAttachment($attachment);
-
-        $this->say($message);
-    }
+//     $this->say($product->name.'додано до кошика');
+    // }
 
     public function run()
     {
@@ -134,14 +166,3 @@ class SearchProductConversation extends Conversation
 
 //     $this->say($product->name.'додано до кошика');
 // }
-
-/// add image at screen
-        // $this->say($products[1]->name);
-
-        // $image = $products[2]->photo;
-        // $text = $products[2]->description;
-        // $attachment = new Image($image);
-        // $message = OutgoingMessage::create($text)
-        //             ->withAttachment($attachment);
-
-        // $this->say($message);
