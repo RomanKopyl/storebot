@@ -23,11 +23,11 @@ class SearchProductConversation extends Conversation
     public function searchProduct()
     {
         $productSought = '';
+        $productsFound = [];
 
-        $this->ask('Введіть назву товару', function (Answer $answer) {
+        $this->ask('Введіть назву товару', function (Answer $answer) use ($productsFound) {
             $productSought = $answer->getText();
             $products = Product::all();
-            $productsFound = [];
 
             foreach ($products as $product) {
                 if (stripos($product->name, $productSought) !== false) {
@@ -40,12 +40,23 @@ class SearchProductConversation extends Conversation
                     $this->addScreen($image, $text);
                 }
             }
+
             if (empty($productsFound)) {
                 // $this->say('Товарів не знайдено. Спробуйте ще.');
                 // $this->bot->startConversation(new InitiatoryConversation());
-                // $this->askContinue();
+                $this->askContinue();
             }
         });
+    }
+
+    protected function addButtons($productsFound)
+    {
+        $buttons = [];
+        foreach ($productsFound as $product) {
+            $buttons[] = Button::create($product > name)->value($product > name);
+        }
+
+        return $buttons;
     }
 
     public function askContinue()
@@ -56,6 +67,15 @@ class SearchProductConversation extends Conversation
                 Button::create('Так')->value('InitiatoryConversation'),
                 Button::create('Іншим разом')->value('refuse'),
             ]);
+        $this->ask($question, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                if ($answer->getValue() === 'InitiatoryConversation') {
+                    $this->bot->startConversation(new InitiatoryConversation());
+                } else {
+                    $this->bot->startConversation(new EndConversation());
+                }
+            }
+        });
     }
 
     public function addScreen($image, $text)

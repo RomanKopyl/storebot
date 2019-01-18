@@ -87,7 +87,7 @@ class ProductsTableSeeder extends Seeder
             'photo' => 'https://brain.com.ua/static/images/prod_img/4/4/U0326444_big.jpg',
             'description' => 'процесор процесор Qualcomm SDM636 Snapdragon 636 Частота процесора 1.8 GHz кількість ядер 8 core',
             'category' => 'notebook',
-            'category_id' => '3',
+            'category_id' => '1',
             'price' => '33333',
         ]);
     }

@@ -21,7 +21,7 @@ class InitiatoryConversation extends Conversation
             ->callbackId('firstQuestion')
             ->addButtons([
                 Button::create('Пошук за назвою')->value('searchProduct'),
-                Button::create('Категорія')->value('showAllCategories'),
+                Button::create('Категорії')->value('showAllCategories'),
                 Button::create('Іншим разом')->value('refuse'),
             ]);
         $this->ask($question, function (Answer $answer) {
