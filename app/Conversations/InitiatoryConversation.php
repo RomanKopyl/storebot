@@ -17,7 +17,7 @@ class InitiatoryConversation extends Conversation
      */
     public function firstQuestion()
     {
-        $question = Question::create('Добрий день. Який товар вас цікавить?')
+        $question = Question::create('Який товар вас цікавить?')
             ->callbackId('firstQuestion')
             ->addButtons([
                 Button::create('Пошук за назвою')->value('searchProduct'),
@@ -29,10 +29,11 @@ class InitiatoryConversation extends Conversation
                 if ($answer->getValue() === 'searchProduct') {
                     $this->bot->startConversation(new SearchProductConversation());
                 } elseif ($answer->getValue() === 'showAllCategories') {
-                    $this->bot->startConversation(new ShowAllCategoriesConversation());
+                    $this->bot->startConversation(new ShowCategoriesConversation());
                 } else {
-                    $contents = Storage::get('info.txt');
-                    $this->say($contents);
+                    $this->bot->startConversation(new EndConversation());
+                    // $contents = Storage::get('info.txt');
+                    // $this->say($contents);
                 }
             }
         });

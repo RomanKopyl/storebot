@@ -13,6 +13,6 @@ class EndConversation extends Conversation
      */
     public function run()
     {
-        $this->say('Дякую за звернення. Гарного вам дня.');
+        $this->say('Дякуємо за звернення. Гарного вам дня.');
     }
 }
