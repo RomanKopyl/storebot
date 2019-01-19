@@ -4,14 +4,10 @@ namespace App\Conversations;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
-use Storage;
 use App\Product;
-use App\User;
-use App\Cart;
 
 class SearchProductConversation extends Conversation
 {
@@ -20,7 +16,6 @@ class SearchProductConversation extends Conversation
      *
      * @return mixed
      */
-        global $productsFound;
     public function searchProduct()
     {
         $productSought = '';
@@ -30,7 +25,7 @@ class SearchProductConversation extends Conversation
             $productSought = $answer->getText();
             $products = Product::all();
 
-            //we show found products on screen
+            //show found products on screen
             foreach ($products as $product) {
                 if (stripos($product->name, $productSought) !== false) {
                     array_push($productsFound, $product);
@@ -43,13 +38,11 @@ class SearchProductConversation extends Conversation
                 }
             }
 
-            // if goods are found, add the buy button, otherwise we ask whether to continue the search
-
-            if (!empty($productsFound)) {
-                $this->addBuyButton($productsFound);
-            } else {
-                $this->askContinue();
+            if (empty($productsFound)) {
+                $this->say('Товарів не знайдено');
             }
+
+            $this->bot->startConversation(new AskContinueConversation());
         });
     }
 
@@ -63,25 +56,6 @@ class SearchProductConversation extends Conversation
         $this->say($message);
     }
 
-    public function addBuyButton($productsFound)
-    {
-        $question = Question::create('Натисніть на товар, який хочете придбати.')
-            ->callbackId('4Question')
-            ->addButtons($this->addButtons());
-
-        $this->ask($question, function (Answer $answer) {
-            if ($answer->isInteractiveMessageReply()) {
-                foreach ($productsFound as $product) {
-                    if ($answer->getValue() === $product->name) {
-                        $this->say($product->name);
-                        // $this->addProducts($product);
-                        // $this->bot->startConversation(new ShowProductByConversation());
-                    }
-                }
-            }
-        });
-    }
-
     public function addButtons($productsFound)
     {
         $buttons = [];
@@ -92,78 +66,8 @@ class SearchProductConversation extends Conversation
         return $buttons;
     }
 
-    public function askContinue()
-    {
-        $question = Question::create('Товарів не знайдено. Бажаєте продовжити пошук?')
-            ->callbackId('secondQuestion')
-            ->addButtons([
-                Button::create('Так')->value('InitiatoryConversation'),
-                Button::create('Іншим разом')->value('refuse'),
-            ]);
-        $this->ask($question, function (Answer $answer) {
-            if ($answer->isInteractiveMessageReply()) {
-                if ($answer->getValue() === 'InitiatoryConversation') {
-                    $this->bot->startConversation(new InitiatoryConversation());
-                } else {
-                    $this->bot->startConversation(new EndConversation());
-                }
-            }
-        });
-    }
-
-    // public function addProduct($product)
-    // {
-//     $cart->user_id = User::where('user_id', $user_id)->first();
-//     $cart->products = Product::where('product', $product)->first();
-//     $cart->amount += Product::where('price', $price)->first();
-//     $user->save();
-
-//     $this->say($product->name.'додано до кошика');
-    // }
-
     public function run()
     {
         $this->searchProduct();
     }
 }
-
-//     $productAddCart = '';
-
-//     if (!empty($productsFound)) {
-//         $question = Question::create('Якщо товар вас зацікавав, додайте до кошика.')
-//                     ->callbackId('is_start_order')
-//                     ->addButtons([
-//                         // {
-//                         //     foreach ($productsFound as $product) {
-//                         //         $productAddCart = $product->name;
-//                         //         Button::create($productAddCart)->value($productAddCart),
-//                         //     }
-//                         // }
-//                         Button::create($productsFound[0])->value('addProduct'),
-//                         Button::create('Кошик')->value('Cart'),
-//                         Button::create('Поновити пошук')->value('newSearch'),
-//                     ]);
-//     }
-//     $this->ask($question, function (Answer $answer) {
-//         if ($answer->isInteractiveMessageReply()) {
-//             if ($answer->getValue() === 'addProduct') {
-//                 $this->addProduct($productsFound[0]);
-//             } elseif ($answer->getValue() === 'Cart') {
-//                 $this->bot->startConversation(new showCartConversation());
-//             } else {
-//                 $contents = Storage::get('info.txt');
-//                 $this->say($contents);
-//             }
-//         }
-//     });
-// }
-
-// public function addProduct($product)
-// {
-//     $cart->user_id = User::where('user_id', $user_id)->first();
-//     $cart->products = Product::where('product', $product)->first();
-//     $cart->amount += Product::where('price', $price)->first();
-//     $user->save();
-
-//     $this->say($product->name.'додано до кошика');
-// }

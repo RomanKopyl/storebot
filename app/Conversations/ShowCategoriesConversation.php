@@ -49,35 +49,8 @@ class ShowCategoriesConversation extends Conversation
 
             $this->addScreen($image, $text);
         }
-        //Show list of buttons-products on screen
-        $this->addBuyButtons($productsFound);
-    }
 
-    public function addBuyButtons($productsFound)
-    {
-        $question = Question::create('Натисніть на товар, який хочете придбати.')
-            ->callbackId('addBuyButtons')
-            ->addButtons($this->addProductButtons($productsFound));
-
-        $this->ask($question, function (Answer $answer) use ($productsFound) {
-            if ($answer->isInteractiveMessageReply()) {
-                foreach ($productsFound as $product) {
-                    if ($answer->getValue() === $product->name) {
-                        $this->say($product->name);
-                    }
-                }
-            }
-        });
-    }
-
-    public function addProductButtons($productsFound)
-    {
-        $buttons = [];
-        foreach ($productsFound as $product) {
-            $buttons[] = Button::create($product->name)->value($product->name);
-        }
-
-        return $buttons;
+        $this->bot->startConversation(new AskContinueConversation());
     }
 
     public function addScreen($image, $text)

@@ -12,11 +12,12 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            //'id', 'name', 'phone', 'chat_id',
+            //'id', 'name', 'phone', 'chat_id', 'productsFound'
             $table->increments('id');
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('chat_id')->unique();
+            $table->json('productsFound')->nulablue();
             $table->timestamps();
         });
     }

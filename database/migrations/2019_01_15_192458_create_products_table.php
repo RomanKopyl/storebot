@@ -17,7 +17,6 @@ class CreateProductsTable extends Migration
             $table->string('name')->nullable();
             $table->string('photo')->nullable();
             $table->longText('description')->nullable();
-            $table->string('category')->nullable(); //temporarily category
             $table->unsignedInteger('category_id')->nullable();
             $table->integer('price')->nullable();
             $table->timestamps();
