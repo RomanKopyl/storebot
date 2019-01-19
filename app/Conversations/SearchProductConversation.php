@@ -20,6 +20,7 @@ class SearchProductConversation extends Conversation
      *
      * @return mixed
      */
+        global $productsFound;
     public function searchProduct()
     {
         $productSought = '';

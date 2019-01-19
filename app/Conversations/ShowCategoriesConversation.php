@@ -17,10 +17,12 @@ class ShowCategoriesConversation extends Conversation
      *
      * @return mixed
      */
+
+    //Show list of buttons-categories on screen
     public function askCategory()
     {
         $question = Question::create('Товари якої категорії хочете переглянути?')
-            ->callbackId('3Question')
+            ->callbackId('askCategory')
             ->addButtons($this->addButtons());
 
         $this->ask($question, function (Answer $answer) {
@@ -29,16 +31,14 @@ class ShowCategoriesConversation extends Conversation
                 foreach ($categories as $category) {
                     if ($answer->getValue() === $category->name) {
                         $this->addProducts($category);
-
-                        // $this->say($category->name);
-                        // $this->bot->startConversation(new ShowProductByConversation());
                     }
                 }
             }
         });
     }
 
-    protected function addProducts($category)
+    //Show list of products on screen && list of buy buttons of these products
+    public function addProducts($category)
     {
         $productsFound = $category->products;
 
@@ -49,6 +49,35 @@ class ShowCategoriesConversation extends Conversation
 
             $this->addScreen($image, $text);
         }
+        //Show list of buttons-products on screen
+        $this->addBuyButtons($productsFound);
+    }
+
+    public function addBuyButtons($productsFound)
+    {
+        $question = Question::create('Натисніть на товар, який хочете придбати.')
+            ->callbackId('addBuyButtons')
+            ->addButtons($this->addProductButtons($productsFound));
+
+        $this->ask($question, function (Answer $answer) use ($productsFound) {
+            if ($answer->isInteractiveMessageReply()) {
+                foreach ($productsFound as $product) {
+                    if ($answer->getValue() === $product->name) {
+                        $this->say($product->name);
+                    }
+                }
+            }
+        });
+    }
+
+    public function addProductButtons($productsFound)
+    {
+        $buttons = [];
+        foreach ($productsFound as $product) {
+            $buttons[] = Button::create($product->name)->value($product->name);
+        }
+
+        return $buttons;
     }
 
     public function addScreen($image, $text)
@@ -75,9 +104,5 @@ class ShowCategoriesConversation extends Conversation
     public function run()
     {
         $this->askCategory();
-        // $categorius = Category::all();
-        // foreach ($categorius as $category) {
-        //     $this->say($category->name.PHP_EOL);
-        // }
     }
 }
