@@ -1,1 +1,1 @@
-#StoreBot is bot for searching and purchasing goods using Telegrams.
+#StoreBot is bot for searching goods using Telegrams.
