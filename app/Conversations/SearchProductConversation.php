@@ -4,7 +4,6 @@ namespace App\Conversations;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use App\Product;
@@ -54,16 +53,6 @@ class SearchProductConversation extends Conversation
                         ->withAttachment($attachment);
 
         $this->say($message);
-    }
-
-    public function addButtons($productsFound)
-    {
-        $buttons = [];
-        foreach ($productsFound as $product) {
-            $buttons[] = Button::create($product->name)->value($product->name);
-        }
-
-        return $buttons;
     }
 
     public function run()
