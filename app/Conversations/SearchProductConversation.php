@@ -30,7 +30,7 @@ class SearchProductConversation extends Conversation
                     array_push($productsFound, $product);
 
                     $image = $product->photo;
-                    $text = $product->name.PHP_EOL.' - '.$product->price.' грн'
+                    $text = $product->name.' - '.$product->price.' грн'
                                         .PHP_EOL.$product->description;
 
                     $this->addScreen($image, $text);
